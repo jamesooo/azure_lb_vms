@@ -7,7 +7,7 @@ variable "instances" {
   description = "The instance(s) that will be created."
   default = {
     "single-1" = {
-      name   = "jamesooo_lb_demo_default-1"
+      name   = "jamesooo-lb-demo-default-1"
       count  = 1
       region = "westus3"
     },

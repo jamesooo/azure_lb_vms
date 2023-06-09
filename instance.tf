@@ -24,13 +24,13 @@ resource "azurerm_virtual_machine" "jamesooo_lb_demo" {
     version   = "latest"
   }
   storage_os_disk {
-    name              = "${each.value.name}-osdisk"
+    name              = "${each.value.name}_osdisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
   os_profile {
-    computer_name  = "${each.value.name}"
+    computer_name  = replace("${each.value.name}", "_", "-")
     admin_username = local.username
     admin_password = random_password.password.result
   }
@@ -71,7 +71,7 @@ SETTINGS
 resource "azurerm_network_interface" "jamesooo_lb_demo" {
   for_each = { for instance in local.expanded_instances : instance.name => instance }
 
-  name                = "network_interface-${each.value.name}"
+  name                = "network_interface_${each.value.name}"
   location            = each.value.region
   resource_group_name = azurerm_resource_group.jamesooo_lb_demo[each.value.region].name
 
@@ -108,7 +108,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "backend_o
 resource "azurerm_bastion_host" "jamesooo_lb_demo" {
   for_each = azurerm_resource_group.jamesooo_lb_demo
 
-  name                = "bastion-${each.value.location}"
+  name                = "bastion_${each.value.location}"
   location            = each.value.location
   resource_group_name = each.value.name
 
