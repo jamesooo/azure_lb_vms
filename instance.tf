@@ -105,6 +105,37 @@ resource "azurerm_network_interface_backend_address_pool_association" "backend_o
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend_outbound[each.value.location].id
 }
 
+resource "azurerm_network_security_group" "jamesooo_lb_demo" {
+  for_each = azurerm_resource_group.jamesooo_lb_demo
+
+  name                = "security_group_${each.key}"
+  location            = azurerm_resource_group.jamesooo_lb_demo[each.key].location
+  resource_group_name = azurerm_resource_group.jamesooo_lb_demo[each.key].name
+
+  security_rule {
+    name                       = "Allow_HTTP_${each.key}"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "Internet"
+    destination_address_prefix = "*"
+  }
+
+  tags = {
+    environment = "Production"
+  }
+}
+
+resource "azurerm_network_interface_security_group_association" "jamesooo_lb_demo" {
+  for_each = azurerm_virtual_machine.jamesooo_lb_demo
+
+  network_interface_id = azurerm_network_interface.jamesooo_lb_demo[each.value.name].id
+  network_security_group_id = azurerm_network_security_group.jamesooo_lb_demo[each.value.location].id
+}
+
 resource "azurerm_bastion_host" "jamesooo_lb_demo" {
   for_each = azurerm_resource_group.jamesooo_lb_demo
 

@@ -106,26 +106,3 @@ output "outbound_ip_addresses" {
     }
   }
 }
-resource "azurerm_network_security_group" "jamesooo_lb_demo" {
-  for_each = azurerm_resource_group.jamesooo_lb_demo
-
-  name                = "security_group_${each.key}"
-  location            = azurerm_resource_group.jamesooo_lb_demo[each.key].location
-  resource_group_name = azurerm_resource_group.jamesooo_lb_demo[each.key].name
-
-  security_rule {
-    name                       = "Allow_HTTP_${each.key}"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "*"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-    source_address_prefix      = "Internet"
-    destination_address_prefix = "*"
-  }
-
-  tags = {
-    environment = "Production"
-  }
-}
