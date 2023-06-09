@@ -76,7 +76,7 @@ resource "azurerm_network_interface" "jamesooo_lb_demo" {
   resource_group_name = azurerm_resource_group.jamesooo_lb_demo[each.value.region].name
 
   ip_configuration {
-    name                          = "internal"
+    name                          = "internal-${each.value.name}"
     subnet_id                     = azurerm_subnet.vnet[each.value.region].id
     private_ip_address_allocation = "Dynamic"
   }
@@ -93,7 +93,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "backend" 
   for_each = azurerm_virtual_machine.jamesooo_lb_demo
 
   network_interface_id    = azurerm_network_interface.jamesooo_lb_demo[each.value.name].id
-  ip_configuration_name   = "internal"
+  ip_configuration_name   = "internal-${each.value.name}"
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend[each.value.location].id
 }
 
@@ -101,7 +101,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "backend_o
   for_each = azurerm_virtual_machine.jamesooo_lb_demo
 
   network_interface_id    = azurerm_network_interface.jamesooo_lb_demo[each.value.name].id
-  ip_configuration_name   = "internal"
+  ip_configuration_name   = "internal-${each.value.name}"
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend_outbound[each.value.location].id
 }
 
