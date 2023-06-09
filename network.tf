@@ -2,7 +2,7 @@ resource "azurerm_virtual_network" "jamesooo_lb_demo" {
   for_each = azurerm_resource_group.jamesooo_lb_demo
 
   name                = "vnet_${each.key}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
   resource_group_name = each.value.name
   location            = each.value.location
 }
@@ -15,7 +15,7 @@ resource "azurerm_subnet" "vnet" {
   virtual_network_name = azurerm_virtual_network.jamesooo_lb_demo[each.value.location].name
   address_prefixes     = ["10.0.0.0/24"]
 
-  depends_on = [ azurerm_virtual_network.jamesooo_lb_demo ]
+  depends_on = [azurerm_virtual_network.jamesooo_lb_demo]
 }
 
 resource "azurerm_subnet" "bastion" {
@@ -26,10 +26,10 @@ resource "azurerm_subnet" "bastion" {
   virtual_network_name = azurerm_virtual_network.jamesooo_lb_demo[each.value.location].name
   address_prefixes     = ["10.0.1.0/24"]
 
-  depends_on = [ 
+  depends_on = [
     azurerm_virtual_network.jamesooo_lb_demo,
     azurerm_subnet.vnet,
-   ]
+  ]
 }
 
 resource "azurerm_public_ip" "frontend" {
@@ -40,7 +40,7 @@ resource "azurerm_public_ip" "frontend" {
   resource_group_name     = azurerm_resource_group.jamesooo_lb_demo[each.value.location].name
   allocation_method       = "Static"
   idle_timeout_in_minutes = 30
-  sku = "Standard"
+  sku                     = "Standard"
 
   tags = {
     environment = "frontend_${each.value.location}"
@@ -65,7 +65,7 @@ resource "azurerm_public_ip" "bastion" {
   resource_group_name     = azurerm_resource_group.jamesooo_lb_demo[each.value.location].name
   allocation_method       = "Static"
   idle_timeout_in_minutes = 30
-  sku = "Standard"
+  sku                     = "Standard"
 
   tags = {
     environment = "bastion_${each.key}"
@@ -90,7 +90,7 @@ resource "azurerm_public_ip" "outbound" {
   resource_group_name     = azurerm_resource_group.jamesooo_lb_demo[each.value.location].name
   allocation_method       = "Static"
   idle_timeout_in_minutes = 30
-  sku = "Standard"
+  sku                     = "Standard"
 
   tags = {
     environment = "outbound_${each.key}"

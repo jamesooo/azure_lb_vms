@@ -7,14 +7,14 @@ resource "random_password" "password" {
 resource "azurerm_virtual_machine" "jamesooo_lb_demo" {
   for_each = { for instance in local.expanded_instances : instance.name => instance }
 
-  name                  = "${each.value.name}"
+  name                  = each.value.name
   location              = azurerm_resource_group.jamesooo_lb_demo[each.value.region].location
   resource_group_name   = azurerm_resource_group.jamesooo_lb_demo[each.value.region].name
   network_interface_ids = [azurerm_network_interface.jamesooo_lb_demo[each.value.name].id]
   vm_size               = "Standard_DS1_v2"
 
   # This is just an example environemnt I don't want to keep the data
-  delete_os_disk_on_termination = true
+  delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
 
   storage_image_reference {
@@ -41,17 +41,17 @@ resource "azurerm_virtual_machine" "jamesooo_lb_demo" {
     environment = "staging"
   }
 
-  depends_on = [ azurerm_network_interface.jamesooo_lb_demo ]
+  depends_on = [azurerm_network_interface.jamesooo_lb_demo]
 }
 
 resource "azurerm_virtual_machine_extension" "install_web_server" {
   for_each = azurerm_virtual_machine.jamesooo_lb_demo
 
-  name                 = "install_web_server"
-  virtual_machine_id   = each.value.id
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.1"
+  name                       = "install_web_server"
+  virtual_machine_id         = each.value.id
+  publisher                  = "Microsoft.Azure.Extensions"
+  type                       = "CustomScript"
+  type_handler_version       = "2.1"
   auto_upgrade_minor_version = true
 
   settings = <<SETTINGS
@@ -65,7 +65,7 @@ SETTINGS
     environment = "Production"
   }
 
-  depends_on = [ azurerm_virtual_machine.jamesooo_lb_demo ]
+  depends_on = [azurerm_virtual_machine.jamesooo_lb_demo]
 }
 
 resource "azurerm_network_interface" "jamesooo_lb_demo" {
@@ -132,7 +132,7 @@ resource "azurerm_network_security_group" "jamesooo_lb_demo" {
 resource "azurerm_network_interface_security_group_association" "jamesooo_lb_demo" {
   for_each = azurerm_virtual_machine.jamesooo_lb_demo
 
-  network_interface_id = azurerm_network_interface.jamesooo_lb_demo[each.value.name].id
+  network_interface_id      = azurerm_network_interface.jamesooo_lb_demo[each.value.name].id
   network_security_group_id = azurerm_network_security_group.jamesooo_lb_demo[each.value.location].id
 }
 

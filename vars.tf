@@ -1,8 +1,8 @@
 variable "instances" {
   type = map(object({
-    name                      = string
-    count                     = number
-    region                    = string
+    name   = string
+    count  = number
+    region = string
   }))
   description = "The instance(s) that will be created."
   default = {
@@ -15,14 +15,14 @@ variable "instances" {
 }
 
 locals {
-  username             = "jamesooo"
+  username = "jamesooo"
 
-  instance_regions     = [for instance in var.instances : instance.region]
+  instance_regions = [for instance in var.instances : instance.region]
 
   # Create a map of instances with the count expanded such that the map includes an entry for every instance to be created
   expanded_instances = flatten([for instance in var.instances : [
     for i in range(instance.count) : {
-      name                      = "${instance.name}-${i}",
-      region                    = instance.region,
+      name   = "${instance.name}-${i}",
+      region = instance.region,
   }]])
 }
