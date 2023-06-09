@@ -18,9 +18,9 @@ resource "azurerm_virtual_machine" "jamesooo_lb_demo" {
   delete_data_disks_on_termination = true
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "20.04-LTS"
+    publisher = "canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
     version   = "latest"
   }
   storage_os_disk {
@@ -51,7 +51,7 @@ resource "azurerm_virtual_machine_extension" "install_web_server" {
   virtual_machine_id   = each.value.id
   publisher            = "Microsoft.Azure.Extensions"
   type                 = "CustomScript"
-  type_handler_version = "1.7"
+  type_handler_version = "2.1"
   auto_upgrade_minor_version = true
 
   settings = <<SETTINGS
